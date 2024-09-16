@@ -78,30 +78,32 @@ val githubProperties = Properties().apply {
 afterEvaluate {
     publishing {
         publications {
-                create<MavenPublication>("release") {
-                    from(components["release"])
+            create<MavenPublication>("release") {
+                from(components["release"])
 
-                    groupId = "com.lib.quad.logixs"
-                    group="com.lib.quad.logixs"
-                    artifactId = "loadify"
-                    version = "1.0.4"
-                }
+                groupId = "com.lib.quad.logixs"
+                group = "com.lib.quad.logixs"
+                artifactId = "loadify"
+                version = "1.0.0"
             }
         }
         repositories {
 
             maven {
-                name = "Loadify"
+                name = "loadify"
                 /** Configure path of your package repository on Github
                  *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
                  */
-                url = uri("https://maven.pkg.github.com/kami-kamran/Loadify") // Github Package
+                url = uri("https://maven.pkg.github.com/quadLogixs/loadify") // Github Package
                 credentials {
                     //Fetch these details from the properties file or from Environment variables
-                    username = githubProperties.get("gpr.usr") as String? ?: System.getenv("GPR_USER")
-                    password = githubProperties.get("gpr.key") as String? ?: System.getenv("GPR_API_KEY")
+                    username =
+                        githubProperties.get("gpr.usr") as String? ?: System.getenv("GPR_USER")
+                    password =
+                        githubProperties.get("gpr.key") as String? ?: System.getenv("GPR_API_KEY")
                 }
             }
         }
+
     }
-}
+ }
