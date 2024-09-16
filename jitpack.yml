@@ -1,0 +1,13 @@
+# JitPack configuration file
+
+version: 1.0.0
+group: com.lib.quad.logixs
+
+# Specify the JDK version to use (optional)
+jdk:
+  - openjdk17
+
+
+# Custom build command (optional)
+# script:
+#   - ./gradlew build
