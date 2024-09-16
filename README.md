@@ -22,7 +22,7 @@ To use **Loadify** in your Android project, follow these steps:
 
 In your project’s `build.gradle` file, add the sdk:
 ```kotlin
-implementation("com.github.QuadLogixs:loadify:1.0.0")
+implementation("com.github.quadLogixs:loadify:1.0.0")
 ```
 ### Step 2: Add maven
 In your project’s `settings.gradle` file, add the maven:
