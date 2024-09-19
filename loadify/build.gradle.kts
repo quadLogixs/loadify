@@ -1,10 +1,11 @@
 import java.util.Properties
-group="com.lib.quad.logixs"
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
     id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.29.0" apply false
+    id("com.gradleup.nmcp") version "0.0.8" apply false
 }
 
 android {
@@ -28,11 +29,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -72,38 +73,3 @@ dependencies {
     api(libs.coil.compose)
     api(libs.lottie.compose)
 }
-val githubProperties = Properties().apply {
-    file("github.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
-}
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-
-                groupId = "com.lib.quad.logixs"
-                group = "com.lib.quad.logixs"
-                artifactId = "loadify"
-                version = "1.0.0"
-            }
-        }
-        repositories {
-
-            maven {
-                name = "loadify"
-                /** Configure path of your package repository on Github
-                 *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
-                 */
-                url = uri("https://maven.pkg.github.com/quadLogixs/loadify") // Github Package
-                credentials {
-                    //Fetch these details from the properties file or from Environment variables
-                    username =
-                        githubProperties.get("gpr.usr") as String? ?: System.getenv("GPR_USER")
-                    password =
-                        githubProperties.get("gpr.key") as String? ?: System.getenv("GPR_API_KEY")
-                }
-            }
-        }
-
-    }
- }
