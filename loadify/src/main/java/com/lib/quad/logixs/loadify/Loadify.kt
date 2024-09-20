@@ -3,8 +3,10 @@ package com.lib.quad.logixs.loadify
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,23 +16,28 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * @author: Muhammad Kamran
@@ -126,8 +133,8 @@ internal fun LoadifyImage(
             contentScale = contentScale
         )
 
-        is String -> LoadImageUrl(
-            url = image,
+        is String -> LoadImageFromUrl(
+            imageUrl = image,
             modifier = modifier,
             placeholder = placeholder,
             errorImage = errorImage,
@@ -173,7 +180,7 @@ internal fun LoadImageResource(
     )
 }
 
-@Composable
+/*@Composable
 internal fun LoadImageUrl(
     url: String,
     modifier: Modifier = Modifier,
@@ -195,7 +202,7 @@ internal fun LoadImageUrl(
         contentScale = contentScale,
         alpha = alpha
     )
-}
+}*/
 
 @Composable
 internal fun LoadImageBitmap(
@@ -207,7 +214,7 @@ internal fun LoadImageBitmap(
     contentScale: ContentScale = ContentScale.Fit
 ) {
     Image(
-        painter = rememberAsyncImagePainter(bitmap),
+        bitmap=bitmap.asImageBitmap(),
         contentDescription = null,
         colorFilter = colorFilter,
         modifier = modifier,
@@ -233,17 +240,15 @@ internal fun LoadifyIcon(
             modifier = modifier
         )
 
-        is String -> Icon(
-            painter = rememberAsyncImagePainterWithPlaceholder(model = icon,
-                placeholder = placeholder?.let { painterResource(placeholder) },
-                error = errorImage?.let { painterResource(errorImage) }),
-            tint = tint,
-            contentDescription = null,
-            modifier = modifier
+        is String -> LoadIconFromUrl(
+            iconUrl = icon,
+            modifier = modifier,
+            placeholder = placeholder,
+            errorImage = errorImage
         )
 
         is Bitmap -> Icon(
-            painter = rememberAsyncImagePainter(icon),
+            bitmap = icon.asImageBitmap(),
             contentDescription = null,
             tint = tint,
             modifier = modifier
@@ -269,6 +274,127 @@ internal fun AnimatedPreloader(
         composition = composition, progress = { progress }, modifier = modifier
     )
 }
+
+
+
+
+
+@Composable
+internal fun LoadImageFromUrl(
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    placeholder: Int? = null,
+    errorImage: Int? = null,
+    colorFilter: ColorFilter? = null,
+    alignment: Alignment = Alignment.Center,
+    alpha: Float = DefaultAlpha,
+    contentScale: ContentScale = ContentScale.Fit
+) {
+    // Manage the bitmap state (loading, success, or error)
+    val bitmapState by produceState<Bitmap?>(initialValue = null, imageUrl) {
+        value = loadImage(imageUrl)
+    }
+    // Display the image
+    Box(modifier = modifier) {
+        when {
+            bitmapState != null -> {
+                Image(
+                    bitmap = bitmapState!!.asImageBitmap(),
+                    contentDescription = "Loaded Image",
+                    modifier = modifier,
+                    alignment = alignment,
+                    contentScale = contentScale,
+                    alpha = alpha,
+                    colorFilter=colorFilter
+                )
+            }
+            else -> {
+                if (bitmapState!=null && placeholder!=null){
+                    Image(
+                        painter = painterResource(id = placeholder),
+                        contentDescription = "Placeholder or Error",
+                        modifier = modifier,
+                        alignment = alignment,
+                        contentScale = contentScale,
+                        alpha = alpha,
+                        colorFilter=colorFilter
+                    )
+                }else if(bitmapState!=null && errorImage!=null){
+                    Image(
+                        painter = painterResource(id =errorImage),
+                        contentDescription = "Placeholder or Error",
+                        modifier = modifier,
+                        alignment = alignment,
+                        contentScale = contentScale,
+                        alpha = alpha,
+                        colorFilter=colorFilter
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun LoadIconFromUrl(
+    modifier: Modifier = Modifier,
+    iconUrl: String,
+    placeholder: Int? = null,
+    errorImage: Int? = null,
+    tint: Color = LocalContentColor.current
+) {
+    // Manage the bitmap state (loading, success, or error)
+    val bitmapState by produceState<Bitmap?>(initialValue = null, iconUrl) {
+        value = loadImage(iconUrl)
+    }
+    // Display the image
+    Box(modifier = modifier) {
+        when {
+            bitmapState != null -> {
+                Icon(
+                    bitmap = bitmapState!!.asImageBitmap(),
+                    contentDescription = "Loaded Icon",
+                    modifier = modifier,
+                    tint = tint
+                )
+            }
+            else -> {
+                if (bitmapState!=null && placeholder!=null){
+                    Icon(
+                        painter = painterResource(id = placeholder),
+                        contentDescription = "Placeholder or Error",
+                        modifier = modifier,
+                        tint = tint
+                    )
+                }else if(bitmapState!=null && errorImage!=null){
+                    Icon(
+                        painter = painterResource(id =errorImage),
+                        contentDescription = "Placeholder or Error",
+                        modifier = modifier,
+                        tint = tint
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Function to load image from URL without any library
+suspend fun loadImage(url: String): Bitmap? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val inputStream: InputStream = connection.inputStream
+            BitmapFactory.decodeStream(inputStream) // Convert InputStream to Bitmap
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null // Return null on error
+        }
+    }
+}
+
 
 
 @Preview(name = "ImageView")

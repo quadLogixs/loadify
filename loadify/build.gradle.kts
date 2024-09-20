@@ -1,11 +1,8 @@
-import java.util.Properties
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
     id("maven-publish")
-    id("com.vanniktech.maven.publish") version "0.29.0" apply false
-    id("com.gradleup.nmcp") version "0.0.8" apply false
 }
 
 android {
@@ -29,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -46,6 +43,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -68,8 +66,6 @@ dependencies {
     api(libs.androidx.compose.ui.material)
     api(libs.androidx.compose.preview)
     api(libs.androidx.navigation.compose)
-
-    //Others
-    api(libs.coil.compose)
     api(libs.lottie.compose)
 }
+
