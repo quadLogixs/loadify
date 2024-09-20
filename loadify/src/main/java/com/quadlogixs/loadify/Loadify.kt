@@ -1,4 +1,4 @@
-package com.lib.quad.logixs.loadify
+package com.quadlogixs.loadify
 
 import android.content.Context
 import android.content.res.Resources

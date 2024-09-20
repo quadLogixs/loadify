@@ -1,4 +1,4 @@
-package com.lib.quad.logixs.loadify
+package com.quadlogixs.loadify
 
 /**
  * @author: Muhammad Kamran

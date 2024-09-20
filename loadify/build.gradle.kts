@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.lib.quad.logixs.loadify"
+    namespace = "com.quadlogixs.loadify"
     compileSdk = 34
 
     defaultConfig {

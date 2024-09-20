@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.lib.quad.innovation.ui.theme.FourTechInnovationsTheme
 import com.android.lib.quad.logixs.R
-import com.lib.quad.logixs.loadify.Loadify
-import com.lib.quad.logixs.loadify.LoadifyType
+import com.quadlogixs.loadify.Loadify
+import com.quadlogixs.loadify.LoadifyType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +73,7 @@ fun Sample(modifier: Modifier = Modifier) {
         Loadify(
             image = R.raw.lottie_loader,
             loadifyType = LoadifyType.Lottie,
-            placeholder = com.lib.quad.logixs.loadify.R.drawable.ic_loader,
+            placeholder = com.quadlogixs.loadify.R.drawable.ic_loader,
             modifier = Modifier.size(80.dp)
         )
         Spacer(modifier = Modifier.height(15.dp))
